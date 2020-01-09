@@ -6,35 +6,45 @@
  * @flow
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
-    SafeAreaView,
     StyleSheet,
-    ScrollView,
     View,
-    Text,
-    StatusBar,
-    TextInput,
-    Button,
+    FlatList, Button,
 } from 'react-native';
+import GoalItem from './GoalItem';
+import GoalInput from './components/GoalInput';
 
-import {
-    Header,
-    LearnMoreLinks,
-    Colors,
-    DebugInstructions,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
-const App: () => React$Node = () => {
+const App = () => {
+    const [courseGoals, setCourseGoals] = useState([]);
+    const [isAddMode, setIsAddMode] = useState(false);
+
+
+    const addGoalHandler = goalTitle => {
+        setCourseGoals(currentGoals => [...currentGoals, {id: Math.random().toString(), value: goalTitle}]);
+        setIsAddMode(false);
+    };
+
+    const removeGoalHandler = goalId => {
+        setCourseGoals(currentGoals => {
+            return currentGoals.filter((goal) => goal.id !== goalId);
+        });
+    };
+
+    const cancelGoalAdditionHandler = () => {
+        setIsAddMode(false);
+    };
+
     return (
         <View style={styles.screen}>
-            <View style={styles.inputContainer}>
-                <TextInput placeholder="Course Goal"
-                           style={styles.input}/>
-                <Button title="ADD"/>
-            </View>
-            <View style={styles.inputContainer}/>
+            <Button title={'Add New Goal'} onPress={() => setIsAddMode(true)}/>
+            <GoalInput visible={isAddMode}
+                       onAddGoal={addGoalHandler}
+                        onCancel={cancelGoalAdditionHandler}/>
+            <FlatList data={courseGoals} renderItem={itemData =>
+                <GoalItem id={itemData.item.id} onDelete={removeGoalHandler} title={itemData.item.value}/>
+            }/>
         </View>
     );
 };
@@ -43,17 +53,7 @@ const styles = StyleSheet.create({
     screen: {
         padding: 50,
     },
-    inputContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    input: {
-        width: '80%',
-        borderColor: 'black',
-        borderWidth: 1,
-        padding: 10,
-    },
+
 });
 
 export default App;
