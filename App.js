@@ -1,57 +1,52 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {useState} from 'react';
 import {
     StyleSheet,
-    View,
-    FlatList, Button,
+    View
 } from 'react-native';
-import GoalItem from './GoalItem';
-import GoalInput from './components/GoalInput';
+import Header from './components/Header';
+import StartGameScreen from './screens/StartGameScreen';
+import GameScreen from './screens/GameScreen';
+import GameOverScreen from './screens/GameOverScreen';
+
 
 
 const App = () => {
-    const [courseGoals, setCourseGoals] = useState([]);
-    const [isAddMode, setIsAddMode] = useState(false);
+    const [userNumber, setUserNumber] = useState();
+    const [guessRounds, setGuessRounds] = useState(0);
 
-
-    const addGoalHandler = goalTitle => {
-        setCourseGoals(currentGoals => [...currentGoals, {id: Math.random().toString(), value: goalTitle}]);
-        setIsAddMode(false);
+    const configureNewGameHandler = () => {
+        setGuessRounds(0);
+        setUserNumber(null);
     };
 
-    const removeGoalHandler = goalId => {
-        setCourseGoals(currentGoals => {
-            return currentGoals.filter((goal) => goal.id !== goalId);
-        });
+    const startGameHandler = (selectedNumber) => {
+        setUserNumber(selectedNumber);
     };
 
-    const cancelGoalAdditionHandler = () => {
-        setIsAddMode(false);
+    const gameOverHandler = numOfRounds => {
+        setGuessRounds(numOfRounds);
     };
+    let content = <StartGameScreen onStartGame={startGameHandler}/>;
+
+    if (userNumber && guessRounds <= 0) {
+        content = <GameScreen userChoice={userNumber} onGameOver={gameOverHandler}/>;
+    } else if (guessRounds > 0) {
+        content =
+            <GameOverScreen roundsNumber={guessRounds} userNumber={userNumber} onRestart={configureNewGameHandler}/>;
+    }
+
 
     return (
         <View style={styles.screen}>
-            <Button title={'Add New Goal'} onPress={() => setIsAddMode(true)}/>
-            <GoalInput visible={isAddMode}
-                       onAddGoal={addGoalHandler}
-                        onCancel={cancelGoalAdditionHandler}/>
-            <FlatList data={courseGoals} renderItem={itemData =>
-                <GoalItem id={itemData.item.id} onDelete={removeGoalHandler} title={itemData.item.value}/>
-            }/>
+            <Header title="Guess a Number"/>
+            {content}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     screen: {
-        padding: 50,
+        flex: 1,
     },
 
 });
