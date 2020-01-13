@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, StyleSheet, Button, Alert, FlatList} from 'react-native';
+import {View, Text, StyleSheet, Alert, FlatList} from 'react-native';
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
 import DefaultStyles from '../constants/default-styles';
@@ -30,7 +30,7 @@ const GameScreen = props => {
 
     const initialGuess = generateRandomBetween(1, 100, props.userChoice);
     const [currentGuess, setCurrentGuess] = useState(initialGuess);
-    const [pastGuesses, setPastGuesses] = useState(initialGuess);
+    const [pastGuesses, setPastGuesses] = useState([initialGuess.toString()]);
 
     const currentLow = useRef(1);
     const currentHigh = useRef(100);
@@ -61,7 +61,7 @@ const GameScreen = props => {
         //setRounds(curRounds => curRounds + 1);
         setPastGuesses(curPastGuesses => [
             nextNumber.toString(),
-            ...curPastGuesses
+            ...curPastGuesses,
         ]);
     };
 
@@ -84,7 +84,7 @@ const GameScreen = props => {
                 <FlatList
                     keyExtractor={item => item}
                     data={pastGuesses}
-                    renderItem={() => renderListItem(pastGuesses.length)}
+                    renderItem={renderListItem.bind(this, pastGuesses.length)}
                     contentContainerStyle={styles.list}
                 />
             </View>
