@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {
     StyleSheet,
-    View
+    View,
+    SafeAreaView,
 } from 'react-native';
 import Header from './components/Header';
 import StartGameScreen from './screens/StartGameScreen';
 import GameScreen from './screens/GameScreen';
 import GameOverScreen from './screens/GameOverScreen';
-
 
 
 const App = () => {
@@ -35,12 +35,11 @@ const App = () => {
             <GameOverScreen roundsNumber={guessRounds} userNumber={userNumber} onRestart={configureNewGameHandler}/>;
     }
 
-
     return (
-        <View style={styles.screen}>
+        <SafeAreaView style={styles.screen}>
             <Header title="Guess a Number"/>
             {content}
-        </View>
+        </SafeAreaView>
     );
 };
 
